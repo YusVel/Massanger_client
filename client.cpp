@@ -87,5 +87,10 @@ memset(massage,0,strlen(massage));
 recv_bytes  = recv(client_sock,massage,MSGSIZE,0);
 printf("Recive: %s (%d bytes)\n",massage,recv_bytes);
 
+#if defined(_WIN32)
+WSACleanup();
+#endif
+
+
 	return 0;
 }
