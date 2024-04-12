@@ -44,7 +44,7 @@ int main()
 		return 1;
 	}
 #endif
-printf("Configuring client ...\n");
+printf("Configuring client ...");
 SOCKET client_sock = socket(AF_INET,SOCK_STREAM,0);
 if(!ISVALIDSOCKET(client_sock))
 {
@@ -63,6 +63,7 @@ if(connect(client_sock,(sockaddr*)&serveraddr,sizeof(serveraddr))==-1)
 	fprintf(stderr,"Faild  connect()!!!(%d)\n",GETSOCKETERRNO());
 	return 1;
 }
+printf("Connected!\n");
 char massage[MSGSIZE] = {'\0'};
 sprintf(massage,"Hello world!");
 int send_bytes = send(client_sock,massage,strlen(massage),0);
