@@ -56,7 +56,7 @@ memset(&serveraddr,0,sizeof(serveraddr));
 serveraddr.sin_family = AF_INET;
 serveraddr.sin_port = htons(8080);
 
-if (inet_pton(AF_INET, "127.0.0.1", (sockaddr*)&serveraddr) < 1)
+if (inet_pton(AF_INET, "127.0.0.1", &serveraddr.sin_addr.s_addr) < 1)
 {
 	fprintf(stderr, "Faild  inet_pton()!!!(%d)\n", GETSOCKETERRNO());
 	return 1;
@@ -79,11 +79,11 @@ sprintf(massage, "Hello world!");
 
 int send_bytes = send(client_sock,massage,strlen(massage),0);
 printf("Send: %s (%d bytes)\n",massage,send_bytes);
-memset(massage,0,strlen(massage));
+memset(massage,0,MSGSIZE);
 int recv_bytes  = recv(client_sock,massage,MSGSIZE,0);
 printf("Recive: %s (%d bytes)\n",massage,recv_bytes);
 
-memset(massage,0,strlen(massage));
+memset(massage,0,MSGSIZE);
 recv_bytes  = recv(client_sock,massage,MSGSIZE,0);
 printf("Recive: %s (%d bytes)\n",massage,recv_bytes);
 
