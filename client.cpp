@@ -18,24 +18,24 @@ net_settings.ai_family = AF_INET;
 net_settings.ai_socktype = SOCK_STREAM;
 net_settings.ai_protocol = 0;
 
-struct addrinfo *serveraddr;
+struct addrinfo *serveraddr = NULL;
 
-printf("Введите адрес сервера(ddd.ddd.ddd.ddd): ");
-char address[64] = {0};
+printf("Enter server's address (ddd.ddd.ddd.ddd): ");
+char address[128] = {0};
 #if defined(_WIN32)
-scanf_s("%s",address);
+scanf_s("%s",address,sizeof(address));
+
 #else
 scanf("%s",address);
 #endif
 
-printf("Введите порт: ");
-char port[8] = {0};
+printf("Enter port: ");
+char port[128] = {0};
 #if defined(_WIN32)
-scanf_s("%s",port);
+scanf_s("%s",port,sizeof(port));
 #else
 scanf("%s",port);
 #endif
-
 
 if(getaddrinfo(address,port,&net_settings,&serveraddr))
 {
@@ -43,6 +43,14 @@ if(getaddrinfo(address,port,&net_settings,&serveraddr))
 	perror("ERROR");
 	return 1;
 }
+
+if (getnameinfo(serveraddr->ai_addr, serveraddr->ai_addrlen, address, sizeof(address), port, sizeof(port), NI_NUMERICHOST))
+{
+	fprintf(stderr, "Error: getnameinfo() (%d) ", GETSOCKETERRNO());
+	perror("");
+	return 1;
+}
+printf("Remote addess: s%:s%\n", address, port);
 
 
 
