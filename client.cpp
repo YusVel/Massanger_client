@@ -22,14 +22,25 @@ struct addrinfo *serveraddr;
 
 printf("Введите адрес сервера(ddd.ddd.ddd.ddd): ");
 char address[64] = {0};
-gets(address);
+#if defined(_WIN32)
+scanf_s("%s",address);
+#else
+scanf("%s",address);
+#endif
+
 printf("Введите порт: ");
 char port[8] = {0};
-gets(port);
+#if defined(_WIN32)
+scanf_s("%s",port);
+#else
+scanf("%s",port);
+#endif
+
 
 if(getaddrinfo(address,port,&net_settings,&serveraddr))
 {
-	fprintf(stderr,"getaddrinfo() ERROR!",GETSOCKETERRNO());
+	fprintf(stderr,"getaddrinfo() (%d)\n",GETSOCKETERRNO());
+	perror("ERROR");
 	return 1;
 }
 
@@ -39,6 +50,7 @@ SOCKET client_sock = socket(AF_INET,SOCK_STREAM,0);
 if(!ISVALIDSOCKET(client_sock))
 {
 	fprintf(stderr,"Faild  socket()!!!(%d)\n",GETSOCKETERRNO());
+	perror("ERROR");
 	return 1;
 }
 
@@ -55,9 +67,10 @@ if (inet_pton(AF_INET, "127.0.0.1", &serveraddr.sin_addr.s_addr) < 1)
 }
 
 */
-if(connect(client_sock,(sockaddr*)&serveraddr,sizeof(serveraddr))==-1)
+if(connect(client_sock,serveraddr->ai_addr,serveraddr->ai_addrlen)==-1)
 {
 	fprintf(stderr,"Faild  connect()!!!(%d)\n",GETSOCKETERRNO());
+	perror("ERROR");
 	return 1;
 }
 printf("Connected!\n");
