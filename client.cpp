@@ -10,7 +10,10 @@ int main()
 		return 1;
 	}
 #endif
+char address[ADDRLEN] = { 0 };
 printf("Configuring client ...\n");
+
+get_yourIP(address);
 
 struct addrinfo net_settings;
 memset(&net_settings,0,sizeof(net_settings));
@@ -21,7 +24,7 @@ net_settings.ai_protocol = 0;
 struct addrinfo *serveraddr = NULL;
 
 printf("Enter server's address (ddd.ddd.ddd.ddd): ");
-char address[128] = {0};
+
 #if defined(_WIN32)
 scanf_s("%s",address,sizeof(address));
 
@@ -40,14 +43,26 @@ scanf("%s",port);
 if(getaddrinfo(address,port,&net_settings,&serveraddr))
 {
 	fprintf(stderr,"getaddrinfo() (%d)\n",GETSOCKETERRNO());
-	perror("ERROR");
+#if defined (_WIN32)
+	char error_msg[ERRORLEN] = { 0 };
+	strerror_s(error_msg, ERRORLEN, GETSOCKETERRNO());
+	fprintf(stderr, "MASSAGE: %s\n", error_msg);
+#else
+	fprintf(stderr, "MASSAGE: %s", strerror(GETSOCKETERRNO()));
+#endif
 	return 1;
 }
 
 if (getnameinfo(serveraddr->ai_addr, serveraddr->ai_addrlen, address, sizeof(address), port, sizeof(port), NI_NUMERICHOST))
 {
 	fprintf(stderr, "Error: getnameinfo() (%d) ", GETSOCKETERRNO());
-	perror("");
+#if defined (_WIN32)
+	char error_msg[ERRORLEN] = { 0 };
+	strerror_s(error_msg, ERRORLEN, GETSOCKETERRNO());
+	fprintf(stderr, "MASSAGE: %s\n", error_msg);
+#else
+	fprintf(stderr, "MASSAGE: %s", strerror(GETSOCKETERRNO()));
+#endif
 	return 1;
 }
 printf("Remote addess: %s:%s\n", address, port);
@@ -58,7 +73,13 @@ SOCKET client_sock = socket(AF_INET,SOCK_STREAM,0);
 if(!ISVALIDSOCKET(client_sock))
 {
 	fprintf(stderr,"Faild  socket()!!!(%d)\n",GETSOCKETERRNO());
-	perror("ERROR");
+#if defined (_WIN32)
+	char error_msg[ERRORLEN] = { 0 };
+	strerror_s(error_msg, ERRORLEN, GETSOCKETERRNO());
+	fprintf(stderr, "MASSAGE: %s\n", error_msg);
+#else
+	fprintf(stderr, "MASSAGE: %s", strerror(GETSOCKETERRNO()));
+#endif
 	return 1;
 }
 
@@ -78,7 +99,13 @@ if (inet_pton(AF_INET, "127.0.0.1", &serveraddr.sin_addr.s_addr) < 1)
 if(connect(client_sock,serveraddr->ai_addr,serveraddr->ai_addrlen)==-1)
 {
 	fprintf(stderr,"Faild  connect()!!!(%d)\n",GETSOCKETERRNO());
-	perror("ERROR");
+#if defined (_WIN32)
+	char error_msg[ERRORLEN] = { 0 };
+	strerror_s(error_msg, ERRORLEN, GETSOCKETERRNO());
+	fprintf(stderr, "MASSAGE: %s\n", error_msg);
+#else
+	fprintf(stderr, "MASSAGE: %s", strerror(GETSOCKETERRNO()));
+#endif
 	return 1;
 }
 printf("Connected!\n");
