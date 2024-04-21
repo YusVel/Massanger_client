@@ -1,27 +1,27 @@
-#include "Multiplatformheader.h"
+#include "Multiplatformheader.h" //¬се заголовки дл€ работы в разных  OS (linux/win)
 
 int main()
 {
 #if defined(_WIN32)
-	WSADATA d;
-	if(WSAStartup(MAKEWORD(2,2),&d))
+	WSADATA d;				// структура данных, содержаща€ информацию о версии сокетов в ќ—
+	if(WSAStartup(MAKEWORD(2,2),&d)) //инициализаци€ струртуры WSADATA
 	{
 		fprintf(stderr,"Faild to initialize adapters!!!(%d)\n",GETSOCKETERRNO());
 		return 1;
 	}
 #endif
-char address[ADDRLEN] = { 0 };
+char address[ADDRLEN] = { 0 };  //строка с адресом в формате "127.0.0.1"
 printf("Configuring client ...\n");
 
-get_yourIP(address);
+get_yourIP(address); // процедура записывающа€ IP в формате "127.0.0.1" в строку address
 
-struct addrinfo net_settings;
+struct addrinfo net_settings;					//структура содержаща€ информацию о интернет соединении: транспортный протокол, порт, размер адреса, тип сокета и т.д ѕодходит дл€ всех типов алдресов
 memset(&net_settings,0,sizeof(net_settings));
-net_settings.ai_family = AF_INET;
-net_settings.ai_socktype = SOCK_STREAM;
-net_settings.ai_protocol = 0;
+net_settings.ai_family = AF_INET;				//
+net_settings.ai_socktype = SOCK_STREAM;			//Ќастройки будущего соединени€
+net_settings.ai_protocol = 0;					//
 
-struct addrinfo *serveraddr = NULL;
+struct addrinfo *serveraddr = NULL;				// указатель на структуру, с нашими настройками.
 
 printf("Enter server's address (ddd.ddd.ddd.ddd): ");
 
@@ -40,7 +40,7 @@ scanf_s("%s",port,sizeof(port));
 scanf("%s",port);
 #endif
 
-if(getaddrinfo(address,port,&net_settings,&serveraddr))
+if(getaddrinfo(address,port,&net_settings,&serveraddr))		//функци€ заполн€ет пол€
 {
 	fprintf(stderr,"getaddrinfo() (%d)\n",GETSOCKETERRNO());
 #if defined (_WIN32)
@@ -53,9 +53,9 @@ if(getaddrinfo(address,port,&net_settings,&serveraddr))
 	return 1;
 }
 
-if (getnameinfo(serveraddr->ai_addr, serveraddr->ai_addrlen, address, sizeof(address), port, sizeof(port), NI_NUMERICHOST))
+if (getnameinfo(serveraddr->ai_addr, serveraddr->ai_addrlen, address, sizeof(address), port, sizeof(port), NI_NUMERICHOST)) // получаем адрес и порт из нашей структуры
 {
-	fprintf(stderr, "Error: getnameinfo() (%d) ", GETSOCKETERRNO());
+	fprintf(stderr, "Error: getnameinfo() (%d) ", GETSOCKETERRNO());						// NI_NUMERICHOST - флаг дл€ получени€ адреса и порта в формате "127.0.0.1:5000"
 #if defined (_WIN32)
 	char error_msg[ERRORLEN] = { 0 };
 	strerror_s(error_msg, ERRORLEN, GETSOCKETERRNO());
@@ -65,11 +65,11 @@ if (getnameinfo(serveraddr->ai_addr, serveraddr->ai_addrlen, address, sizeof(add
 #endif
 	return 1;
 }
-printf("Remote addess: %s:%s\n", address, port);
+printf("Remote addess: %s:%s\n", address, port); //"127.0.0.1:5000"
 
 
 
-SOCKET client_sock = socket(AF_INET,SOCK_STREAM,0);
+SOCKET client_sock = socket(AF_INET,SOCK_STREAM,0);  //создаем сокет, через который будем общатс€ с сервером по указанному адресу
 if(!ISVALIDSOCKET(client_sock))
 {
 	fprintf(stderr,"Faild  socket()!!!(%d)\n",GETSOCKETERRNO());
@@ -83,20 +83,7 @@ if(!ISVALIDSOCKET(client_sock))
 	return 1;
 }
 
-/*
-struct sockaddr_in serveraddr;
-memset(&serveraddr,0,sizeof(serveraddr));
-serveraddr.sin_family = AF_INET;
-serveraddr.sin_port = htons(8080);
-
-if (inet_pton(AF_INET, "127.0.0.1", &serveraddr.sin_addr.s_addr) < 1)
-{
-	fprintf(stderr, "Faild  inet_pton()!!!(%d)\n", GETSOCKETERRNO());
-	return 1;
-}
-
-*/
-if(connect(client_sock,serveraddr->ai_addr,serveraddr->ai_addrlen)==-1)
+if(connect(client_sock,serveraddr->ai_addr,serveraddr->ai_addrlen)==-1) // пытаемс€ присоединитьс€ к серверу
 {
 	fprintf(stderr,"Faild  connect()!!!(%d)\n",GETSOCKETERRNO());
 #if defined (_WIN32)
