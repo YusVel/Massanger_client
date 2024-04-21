@@ -50,7 +50,7 @@ if (getnameinfo(serveraddr->ai_addr, serveraddr->ai_addrlen, address, sizeof(add
 	perror("");
 	return 1;
 }
-printf("Remote addess: s%:s%\n", address, port);
+printf("Remote addess: %s:%s\n", address, port);
 
 
 
