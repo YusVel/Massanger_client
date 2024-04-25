@@ -111,7 +111,7 @@ while(1)
 #endif
 	struct timeval timeout;		// специальная структура ХраНЯЩАЯ ВРЕМЯ В ДВУХ ПОЛЯХ, СЕКУНДЫ И МИЛИСЕКУНДЫ, устанавливаем  100000 милисекунд
 	timeout.tv_sec = 0;
-	timeout.tv_usec = 100000;
+	timeout.tv_usec = 1000000;
 	
 	if(select(client_sock+1,&sockets_set,0,0, &timeout)<0)
 	{
@@ -127,14 +127,29 @@ while(1)
 	}
 	if(FD_ISSET(client_sock,&sockets_set))
 	{
-		int recv_bytes = recv(client_sock,massage,MSGSIZE);
+		int recv_bytes = recv(client_sock,massage,MSGSIZE,0);
 		if(recv_bytes<1)
 		{
-			printf("\n***Connection close by server!***\n"
+			printf("\n***Connection close by server!***\n");
 			break;
 		}
+		printf("SERVER SEND %d bytes: \n\n%.*s",recv_bytes,recv_bytes,massage);
 	}
-	printf("SERVER SEND %d bytes: \n\n%.*s",recv_bytes,massage);
+	
+	
+#if defined (_WIN32)
+	if(_kbhit())
+	{
+#else
+	if(FD_ISSET(0,&sockets_set))
+	{
+#endif
+	memset(massage,0,MSGSIZE);
+	if(!fgets(massage,MSGSIZE,stdin)){break;}
+	printf("We sending: %s.  ",massage);
+	int send_bytes = send(client_sock,massage,strlen(massage),0);
+	printf("SEND: %d bytes\n",send_bytes);
+	}
 	
 }
 
@@ -144,14 +159,7 @@ while(1)
 //////////////////////////////////////////////////////////////
 
 
-
-
-
-
-
-
-
-
+/*
 
 #if defined(_WIN32)
 sprintf_s(massage, "Hello world!");
@@ -168,11 +176,12 @@ printf("Recive: %s (%d bytes)\n",massage,recv_bytes);
 memset(massage,0,MSGSIZE);
 recv_bytes  = recv(client_sock,massage,MSGSIZE,0);
 printf("Recive: %s (%d bytes)\n",massage,recv_bytes);
-
+*/
+	CLOSESOCKET(client_sock);
 #if defined(_WIN32)
-WSACleanup();
+	WSACleanup();
 #endif
 
-
+	printf("***FINISH***");
 	return 0;
 }
