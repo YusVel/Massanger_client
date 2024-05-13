@@ -11,6 +11,7 @@ int main()
 	}
 #endif
 char address[ADDRLEN] = { 0 };  //строка с адресом в формате "127.0.0.1"
+char port[128] = {0};
 printf("Configuring client ...\n");
 
 get_yourIP(address); // процедура записывающая IP в формате "127.0.0.1" в строку address
@@ -23,22 +24,29 @@ net_settings.ai_protocol = 0;					//
 
 struct addrinfo *serveraddr = NULL;				// указатель на структуру, с нашими настройками.
 
+/*
+
 printf("Enter server's address (ddd.ddd.ddd.ddd): ");
 
 #if defined(_WIN32)
 scanf_s("%s",address,sizeof(address));
-
 #else
 scanf("%s",address);
 #endif
 
 printf("Enter port: ");
-char port[128] = {0};
+
 #if defined(_WIN32)
 scanf_s("%s",port,sizeof(port));
 #else
 scanf("%s",port);
 #endif
+
+*/
+//////////////////////////// тестирование
+sprintf(address,"192.168.10.93");
+sprintf(port,"5000");
+///////////////////////////
 
 if(getaddrinfo(address,port,&net_settings,&serveraddr))		//функция заполняет поля
 {
@@ -116,7 +124,7 @@ while(1)
 #endif
 	memset(massage,0,MSGSIZE);
 	if(!fgets(massage,MSGSIZE,stdin)){break;}
-	printf("We sending: %s.  ",massage);
+	printf("We sending: %s",massage);
 	int send_bytes = send(client_sock,massage,strlen(massage),0);
 	printf("SEND: %d bytes\n",send_bytes);
 	}
