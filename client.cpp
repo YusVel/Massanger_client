@@ -12,7 +12,7 @@ int main()
 #endif
 char address[ADDRLEN] = { 0 };  //строка с адресом в формате "127.0.0.1"
 char port[128] = {0};
-printf("Configuring client ...\n");
+printf("***** Configuring client ...\n");
 
 get_yourIP(address); // процедура записывающая IP в формате "127.0.0.1" в строку address
 
@@ -44,42 +44,47 @@ scanf("%s",port);
 
 */
 //////////////////////////// тестирование
+#if defined(_WIN32)
+sprintf_s(address,ADDRLEN, "192.168.0.7");
+sprintf_s(port,PORTLEN, "5000");
+#else
 sprintf(address,"192.168.10.93");
 sprintf(port,"5000");
+#endif
 ///////////////////////////
 
 if(getaddrinfo(address,port,&net_settings,&serveraddr))		//функция заполняет поля
 {
-	fprintf(stderr,"getaddrinfo() (%d)\n",GETSOCKETERRNO());
+	fprintf(stderr,"##### getaddrinfo() (%d) #####\n",GETSOCKETERRNO());
 	show_error(GETSOCKETERRNO());
 	return 1;
 }
 
 if (getnameinfo(serveraddr->ai_addr, serveraddr->ai_addrlen, address, sizeof(address), port, sizeof(port), NI_NUMERICHOST)) // получаем адрес и порт из нашей структуры
 {
-	fprintf(stderr, "Error: getnameinfo() (%d) ", GETSOCKETERRNO());						// NI_NUMERICHOST - флаг для получения адреса и порта в формате "127.0.0.1:5000"
+	fprintf(stderr, "##### Error: getnameinfo() (%d) #####", GETSOCKETERRNO());						// NI_NUMERICHOST - флаг для получения адреса и порта в формате "127.0.0.1:5000"
 	show_error(GETSOCKETERRNO());
 	return 1;
 }
-printf("Remote addess: %s:%s\n", address, port); //"127.0.0.1:5000"
+printf("***** Remote addess: %s:%s\n", address, port); //"127.0.0.1:5000"
 
 
 
 SOCKET client_sock = socket(AF_INET,SOCK_STREAM,0);  //создаем сокет, через который будем общатся с сервером по указанному адресу
 if(!ISVALIDSOCKET(client_sock))
 {
-	fprintf(stderr,"Faild  socket()!!!(%d)\n",GETSOCKETERRNO());
+	fprintf(stderr,"##### Faild  socket()!!!(%d) #####\n",GETSOCKETERRNO());
 	show_error(GETSOCKETERRNO());
 	return 1;
 }
 
 if(connect(client_sock,serveraddr->ai_addr,serveraddr->ai_addrlen)==-1) // пытаемся присоединиться к серверу
 {
-	fprintf(stderr,"Faild  connect()!!!(%d)\n",GETSOCKETERRNO());
+	fprintf(stderr,"##### Faild  connect()!!!(%d) #####\n",GETSOCKETERRNO());
 	show_error(GETSOCKETERRNO());
 	return 1;
 }
-printf("Connected!\n");
+printf("***** Connected!\n");
 
 char massage[MSGSIZE] = {'\0'};
 memset(massage,0,sizeof(massage));
@@ -99,7 +104,7 @@ while(1)
 	
 	if(select(client_sock+1,&sockets_set,0,0, &timeout)<0)//////////////
 	{
-		fprintf(stderr,"select() ERROR! (%d)\n",GETSOCKETERRNO());
+		fprintf(stderr,"##### select() ERROR! (%d) #####\n",GETSOCKETERRNO());
 		show_error(GETSOCKETERRNO());
 		return 1;
 	}
@@ -108,7 +113,7 @@ while(1)
 		int recv_bytes = recv(client_sock,massage,MSGSIZE,0);
 		if(recv_bytes<1)
 		{
-			printf("\n***Connection close by server!***\n");
+			printf("\n***** Connection close by server!\n");
 			break;
 		}
 		printf("SERVER SEND %d bytes: \n\n%.*s",recv_bytes,recv_bytes,massage);
