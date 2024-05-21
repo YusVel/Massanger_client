@@ -116,7 +116,7 @@ while(1)
 			printf("\n***** Connection close by server!\n");
 			break;
 		}
-		printf("SERVER SEND %d bytes: \n\n%.*s",recv_bytes,recv_bytes,massage);
+		printf("*****SERVER RESPONSE %d bytes: %.*s\n\n",recv_bytes,recv_bytes,massage);
 	}
 	
 	
@@ -129,9 +129,9 @@ while(1)
 #endif
 	memset(massage,0,MSGSIZE);
 	if(!fgets(massage,MSGSIZE,stdin)){break;}
-	printf("We sending: %s",massage);
+	//printf("We sending: %s",massage);
 	int send_bytes = send(client_sock,massage,strlen(massage),0);
-	printf("SEND: %d bytes\n",send_bytes);
+	printf("We sending(%d bytes): %s",send_bytes,massage);
 	}
 	
 }
