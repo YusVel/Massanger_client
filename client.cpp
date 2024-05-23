@@ -24,7 +24,7 @@ net_settings.ai_protocol = 0;					//
 
 struct addrinfo *serveraddr = NULL;				// указатель на структуру, с нашими настройками.
 
-/*
+
 
 printf("Enter server's address (ddd.ddd.ddd.ddd): ");
 
@@ -42,7 +42,7 @@ scanf_s("%s",port,sizeof(port));
 scanf("%s",port);
 #endif
 
-*/
+/*
 //////////////////////////// тестирование
 #if defined(_WIN32)
 sprintf_s(address,ADDRLEN, "192.168.0.7");
@@ -52,7 +52,7 @@ sprintf(address,"192.168.10.93");
 sprintf(port,"5000");
 #endif
 ///////////////////////////
-
+*/
 if(getaddrinfo(address,port,&net_settings,&serveraddr))		//функция заполняет поля
 {
 	fprintf(stderr,"##### getaddrinfo() (%d) #####\n",GETSOCKETERRNO());
