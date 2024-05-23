@@ -84,14 +84,15 @@ if(connect(client_sock,serveraddr->ai_addr,serveraddr->ai_addrlen)==-1) // пытае
 	show_error(GETSOCKETERRNO());
 	return 1;
 }
-printf("***** Connected!\n");
+printf("***** Connected!******\n");
 
-char massage[MSGSIZE] = {'\0'};
-memset(massage,0,sizeof(massage));
+char massage[MSGSIZE] ;
+
 ////////////////пробуем функцию select()/////////////////////////
 
 while(1)
 {
+	memset(massage,'\0',MSGSIZE);
 	fd_set sockets_set; // создаем пустой набор сокетов
 	FD_ZERO(&sockets_set); // занул€ем пол€ (об€зательно!!!)
 	FD_SET(client_sock,&sockets_set); //добавл€ем сокет клиента
@@ -100,7 +101,7 @@ while(1)
 #endif
 	struct timeval timeout;		// специальна€ структура ’раЌяўјя ¬–≈ћя ¬ ƒ¬”’ ѕќЋя’, —≈ ”Ќƒџ » ћ»Ћ»—≈ ”Ќƒџ, устанавливаем  100000 милисекунд
 	timeout.tv_sec = 0;
-	timeout.tv_usec = 1000000;
+	timeout.tv_usec = 100000;
 	
 	if(select(client_sock+1,&sockets_set,0,0, &timeout)<0)//////////////
 	{
@@ -116,7 +117,10 @@ while(1)
 			printf("\n***** Connection close by server!\n");
 			break;
 		}
-		printf("*****SERVER RESPONSE %d bytes: %.*s\n\n",recv_bytes,recv_bytes,massage);
+		
+		printf("*****SERVER RESPONSE (%d bytes recive):\n",recv_bytes);
+		printf("*****%.*s\n",recv_bytes,massage);  
+
 	}
 	
 	
