@@ -118,8 +118,8 @@ while(1)
 			break;
 		}
 		
-		printf("*****SERVER RESPONSE (%d bytes recive):\n",recv_bytes);
-		printf("*****%.*s\n",recv_bytes,massage);  
+		printf("*****SERVER RESPONSE (%d bytes recive): ",recv_bytes);
+		printf("%.*s",recv_bytes,massage);  
 
 	}
 	
@@ -135,7 +135,7 @@ while(1)
 	if(!fgets(massage,MSGSIZE,stdin)){break;}
 	//printf("We sending: %s",massage);
 	int send_bytes = send(client_sock,massage,strlen(massage),0);
-	printf("We sending(%d bytes): %s",send_bytes,massage);
+	//printf("We sending(%d bytes): %s",send_bytes,massage);
 	}
 	
 }

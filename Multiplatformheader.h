@@ -184,7 +184,6 @@ void show_arr(SOCKET* arr, int size)
 
 int is_valid_double(char* msg)
 {
-
 	int points = 0;
 	int sign = 0;
 	for (int i = 0; msg[i] != '\0'; i++)
@@ -213,7 +212,7 @@ int is_valid_double(char* msg)
 
 int is_valid_action(char* msg, int recv_bytes)
 {
-	if (recv_bytes == 1)
+	if (recv_bytes == 2)
 	{
 		if (msg[0] == 42 || msg[0] == 43 || msg[0] == 45 || msg[0] == 47)
 		{
