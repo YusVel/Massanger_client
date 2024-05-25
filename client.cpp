@@ -41,6 +41,7 @@ scanf_s("%s",port,sizeof(port));
 #else
 scanf("%s",port);
 #endif
+getchar();
 
 /*
 //////////////////////////// тестирование
@@ -137,7 +138,7 @@ while(1)
 	int send_bytes = send(client_sock,massage,strlen(massage),0);
 	//printf("We sending(%d bytes): %s",send_bytes,massage);
 	}
-	
+	fflush(stdout);
 }
 
 
